@@ -5,43 +5,49 @@ import sqlite3
 import re
 
 
-def co():
-    conn = sqlite3.connect("dataBase.db")
-    c = conn.cursor()
+def dataBaseInit():
+    connection = sqlite3.connect("dataBase.db")
+    cursor = connection.cursor()
 
     try:
-        c.execute("""CREATE TABLE urlYoutube (url text, youtuberName text)""")
-        conn.commit()
+        cursor.execute("SELECT * FROM urlYoutube")
     except:
-        print("error")
+        cursor.execute(
+            """CREATE TABLE urlYoutube (url text, youtuberName text)""")
+        connection.commit()
 
-    url = input("Saisie url : ")
-    nomYoutuber = input("Nom youtuber : ")
+    connection.close()
 
-    # use regex pour verifier l'url
-    if re.match('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', url):
-        print(url)
-        print(nomYoutuber)
-        c.execute('INSERT INTO urlYoutube VALUES (?, ?)', (url, nomYoutuber))
-        conn.commit()
-    else:
-        print("url mauvais format")
 
-    conn.close()
+def addYoutuber():
+    connection = sqlite3.connect("dataBase.db")
+    cursor = connection.cursor()
+
+    state = False
+    while state:
+        url = input("Input url : ")
+        youtuberName = input("Input youtuber name : ")
+
+        # Regex that check the format of url
+        if re.match('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', url):
+            cursor.execute('INSERT INTO urlYoutube VALUES (?, ?)',
+                           (url, youtuberName))
+            connection.commit()
+            state = True
+        else:
+            print("Url problem ! It has to start with http[s]://")
+
+    connection.close()
 
 
 def getData():
-    conn = sqlite3.connect("dataBase.db")
-    c = conn.cursor()
+    connection = sqlite3.connectionect("dataBase.db")
+    cursor = connection.cursor()
 
-    c.execute("SELECT * FROM urlYoutube")
+    cursor.execute("SELECT * FROM urlYoutube")
 
-    dico = {v: k for k, v in c.fetchall()}
-    print(dico)
-    conn.close()
+    dicti = {v: k for k, v in cursor.fetchall()}
 
-    return dico
+    connection.close()
 
-
-if __name__ == "__main__":
-    co()
+    return dicti
