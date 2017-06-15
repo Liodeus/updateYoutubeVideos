@@ -3,6 +3,17 @@
 
 import dataBase
 import function
+import sys
 
-dataBase.dataBaseInit()
-function.choiseUser()
+
+def main():
+    dataBase.dataBaseInit()
+    function.choiseUser()
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("")
+        sys.exit(0)

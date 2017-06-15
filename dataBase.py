@@ -23,7 +23,7 @@ def addYoutuber():
     connection = sqlite3.connect("dataBase.db")
     cursor = connection.cursor()
 
-    state = False
+    state = True
     while state:
         url = input("Input url : ")
         youtuberName = input("Input youtuber name : ")
@@ -33,15 +33,35 @@ def addYoutuber():
             cursor.execute('INSERT INTO urlYoutube VALUES (?, ?)',
                            (url, youtuberName))
             connection.commit()
-            state = True
+            state = False
         else:
             print("Url problem ! It has to start with http[s]://")
 
     connection.close()
 
 
-def getData():
-    connection = sqlite3.connectionect("dataBase.db")
+def deleteYoutuber(name):
+    connection = sqlite3.connect("dataBase.db")
+    cursor = connection.cursor()
+
+    cursor.execute("DELETE FROM urlYoutube WHERE youtuberName = ?", (name, ))
+    connection.commit()
+    connection.close()
+
+    with open("titleFile.txt", "r") as var:
+        contents = var.readlines()
+        newContent = []
+        for content in contents:
+            val = content.split("|")
+            if val[0].strip() != name:
+                newContent.append(content)
+
+    with open("titleFile.txt", "w") as var:
+        var.writelines(newContent)
+
+
+def listYoutuber():
+    connection = sqlite3.connect("dataBase.db")
     cursor = connection.cursor()
 
     cursor.execute("SELECT * FROM urlYoutube")
