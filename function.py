@@ -8,6 +8,9 @@ import dataBase
 import sys
 
 
+# Retrieve html page from the urls, then parse them
+# and compare the last video title to the title 
+# in titleFile if they match no new video
 def update():
 
     # List of urls
@@ -16,6 +19,7 @@ def update():
     # List of the last titles of videos
     titles = []
 
+    # For each url parse the html page and get the last video title
     for name, url in urls.items():
         try:
             uClient = uReq(url)
@@ -27,22 +31,25 @@ def update():
             titles.append(name + "|" + lastVideoTitle["title"])
         except:
             print("A problem occured with this url : ", name, " -> ", url)
-        
 
     current_path = getcwd()
     files = listdir(current_path)
     result = []
 
+    # If titleFile.txt doesn't exists create it
     if "titleFile.txt" not in files:
         with open("titleFile.txt", "a"):
             pass
 
+    # Read the contents of the file
     with open("titleFile.txt", "r") as var:
         contents = var.readlines()
 
+        # Write the result of each url in titleFile.txt
         with open("titleFile.txt", "w") as var2:
             for title in titles:
                 var2.write(title + "\n")
+
         i = 0
         for content in contents:
             if content.replace("\n", "") not in titles:
@@ -57,9 +64,10 @@ def update():
             print(video)
 
 
+# Function that display what command you can use
+# Interface and colors from : [recon-ng v4.9.1, Tim Tomes (@LaNMaSteR53)]
 def choiseUser():
-    print(
-        "%s                    [updateVideos, Thibault Galbourdin (github.com/Liodeus)]" % (Colors.O))
+    print("%s                    [updateVideos, Thibault Galbourdin (github.com/Liodeus)]" % (Colors.O))
 
     # Commands
     print("%s[1] update" % (Colors.B))
@@ -69,6 +77,9 @@ def choiseUser():
     print("%s[4] help" % (Colors.B))
     print("%s[5] exit" % (Colors.B))
     print("%s" % (Colors.N))
+
+    delimiter = ("%s---------------------------------------%s" %
+                 (Colors.G, Colors.N))
 
     while True:
         choiceUser = input("[updateVideos] > ")
@@ -88,8 +99,51 @@ def choiseUser():
             for url, name in dataBase.listYoutuber().items():
                 print(url, ":", name)
 
-        #elif split[0] == "help":
+        # User need help
+        elif split[0] == "help":
+            if len(split) == 1:
+                print("Commands (type [help <topic>]):             ")
+                print(delimiter)
+                print("update           Let you know witch youtuber released a new video  ")
+                print("add              Insert in the database an url and a youtuber name ")
+                print("delete           Remove a youtuber from the database               ")
+                print("list             List all the youtuber from the database           ")
+                print("help             Displays this menu                                ")
+                print("exit             Exit the program                                  ")
+                print(delimiter)
 
+            elif len(split) == 2:
+                if split[1] == "update":
+                    print(delimiter)
+                    print("update")
+                    print("    Let you know witch youtuber released a new video")
+                    print("    Usage: update \n")
+                    print(delimiter)
+
+                elif split[1] == "add":
+                    print(delimiter)
+                    print("add")
+                    print("    Insert in the database an url and a youtuber name")
+                    print("    Usage: add \n")
+                    print(delimiter)
+
+                elif split[1] == "delete":
+                    print(delimiter)
+                    print("delete")
+                    print("    Insert in the database an url and a youtuber name")
+                    print("    Usage: delete <name>  \n")
+                    print(delimiter)
+
+                elif split[1] == "list":
+                    print(delimiter)
+                    print("list")
+                    print("    List all the youtuber from the database")
+                    print("    Usage: list \n")
+                    print(delimiter)
+
+                else:
+                    print('%s[!] No help on %s%s' %
+                          (Colors.R, split[1], Colors.N))   
 
         elif split[0] == "exit":
             sys.exit(0)

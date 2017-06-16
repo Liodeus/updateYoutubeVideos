@@ -5,6 +5,8 @@ import sqlite3
 import re
 
 
+# Create the table urlYoutube and 2 rows url, youtuberName
+# if it doesn't already exists
 def dataBaseInit():
     connection = sqlite3.connect("dataBase.db")
     cursor = connection.cursor()
@@ -19,10 +21,13 @@ def dataBaseInit():
     connection.close()
 
 
+# Insert a new row in urlYoutube table
+# ask for the url then the youtuber name
 def addYoutuber():
     connection = sqlite3.connect("dataBase.db")
     cursor = connection.cursor()
 
+    # Ask until the url is good
     state = True
     while state:
         url = input("Input url : ")
@@ -40,26 +45,35 @@ def addYoutuber():
     connection.close()
 
 
+# Remove a row from urlYoutube and titleFile
+# where name match youtuberName
 def deleteYoutuber(name):
     connection = sqlite3.connect("dataBase.db")
     cursor = connection.cursor()
 
-    cursor.execute("DELETE FROM urlYoutube WHERE youtuberName = ?", (name, ))
-    connection.commit()
-    connection.close()
+    try:
+        cursor.execute(
+            "DELETE FROM urlYoutube WHERE youtuberName = ?", (name, ))
+        connection.commit()
+        connection.close()
 
-    with open("titleFile.txt", "r") as var:
-        contents = var.readlines()
-        newContent = []
-        for content in contents:
-            val = content.split("|")
-            if val[0].strip() != name:
-                newContent.append(content)
+        with open("titleFile.txt", "r") as var:
+            contents = var.readlines()
+            newContent = []
+            for content in contents:
+                val = content.split("|")
+                if val[0].strip() != name:
+                    newContent.append(content)
 
-    with open("titleFile.txt", "w") as var:
-        var.writelines(newContent)
+        with open("titleFile.txt", "w") as var:
+            var.writelines(newContent)
+
+    except:
+        pass
 
 
+# Get all the youtuberName and url from the
+# database in a dictionnary
 def listYoutuber():
     connection = sqlite3.connect("dataBase.db")
     cursor = connection.cursor()
