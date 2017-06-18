@@ -23,9 +23,7 @@ def update():
     for name, url in urls.items():
         try:
             uClient = uReq(url)
-            pageHtml = uClient.read()
-            uClient.close()
-            pageSoup = soup(pageHtml, "html.parser")
+            pageSoup = soup(uClient, "html.parser")
             lastVideoTitle = pageSoup.find(
                 "a", {"class": "yt-uix-sessionlink yt-uix-tile-link spf-link yt-ui-ellipsis yt-ui-ellipsis-2"})
             titles.append(name + "|" + lastVideoTitle["title"])
